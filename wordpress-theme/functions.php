@@ -379,3 +379,42 @@ function madxventure_block_editor_setup() {
     ));
 }
 add_action('after_setup_theme', 'madxventure_block_editor_setup');
+
+/**
+ * Set front page to display static content on theme activation
+ * This ensures the landing page shows instead of blog posts
+ */
+function madxventure_theme_activation() {
+    // Create a static front page if it doesn't exist
+    $front_page = get_page_by_title('Home');
+    
+    if (!$front_page) {
+        $front_page_id = wp_insert_post(array(
+            'post_title'     => 'Home',
+            'post_content'   => '',
+            'post_status'    => 'publish',
+            'post_type'      => 'page',
+            'post_author'    => 1,
+        ));
+    } else {
+        $front_page_id = $front_page->ID;
+    }
+    
+    // Set the front page to use this page
+    update_option('show_on_front', 'page');
+    update_option('page_on_front', $front_page_id);
+    
+    // Create a blog page if needed
+    $blog_page = get_page_by_title('Blog');
+    if (!$blog_page) {
+        $blog_page_id = wp_insert_post(array(
+            'post_title'     => 'Blog',
+            'post_content'   => '',
+            'post_status'    => 'publish',
+            'post_type'      => 'page',
+            'post_author'    => 1,
+        ));
+        update_option('page_for_posts', $blog_page_id);
+    }
+}
+add_action('after_switch_theme', 'madxventure_theme_activation');
