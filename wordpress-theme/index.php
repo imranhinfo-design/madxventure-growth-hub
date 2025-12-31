@@ -1,9 +1,17 @@
 <?php
 /**
  * The main template file
+ * 
+ * This template redirects to front-page content when on homepage
  *
  * @package MadXventure
  */
+
+// If this is the front page, load the front-page template content
+if (is_front_page() || is_home()) {
+    get_template_part('front-page');
+    exit;
+}
 
 get_header();
 ?>
